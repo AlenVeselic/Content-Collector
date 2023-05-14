@@ -1,0 +1,13 @@
+/venv/
+
+*/__pycache__/
+/__pycache__/
+
+/.vscode/
+
+/Data
+/Content to be filtered
+
+.env
+
+temp_notes.md

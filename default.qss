@@ -1,0 +1,197 @@
+/*
+Color palette:
+  Red - #D73333
+  White - #F4F1DE
+  Black - #0A0F0D
+  Subtle purple - #b6acc3
+  disabled text purple hue - #8C7DA1
+
+  Green - #379634
+
+*/
+
+QMainWindow,
+#mainContentWidget,
+#centralWidget {
+  background-color: #D73333;
+  margin: 0;
+  padding:0;
+}
+
+QWidget#scraperTab,
+QWidget#scraper_tab, 
+QWidget#settings_tab,
+QWidget#settings_tab QWidget,
+QWidget#settingsTab,
+QWidget#gallery_tab,
+QWidget#gallery_tab QWidget,
+QTabWidget,  
+QTabWidget::pane,
+QTabBar::tab:selected,
+QTabBar::tab:selected:hover, 
+#scrollAreaWidgetContents, 
+#gridWidget, 
+#contentWidget,
+#scrollArea QWidget,
+#statusbar,
+#statusbar,
+#singleElementScrollArea QWidget,
+#upperToolbar{
+    background-color: #0A0F0D;
+    }
+QProgressBar{
+    background-color: #0A0F0D;
+    border: 2px solid #D73333;
+    text-align: center;
+}
+
+QProgressBar::chunk{
+  background-color: #D73333;
+}
+
+#singleElementGif,
+#singleElementGifContainer QWidget{
+  background-color: #0A0F0D;
+}
+
+QTabBar{
+  color: #D73333;
+  font-weight: 500;
+}
+
+QAbstractScrollArea{
+  border: none;
+}
+
+#column {
+  background-color: #0A0F0D;
+}
+
+QTabBar::tab, QTabBar {
+  background-color: #b6acc3;
+}
+
+QTabBar::tab:hover{
+  background-color: #9f8c7da1;
+}
+
+Scraper
+
+QWidget#scraperView{
+    background-color: #0A0F0D;
+    color: #8C7DA1
+    }
+QWidget#scraperView QWidget
+{
+    color: #8C7DA1
+    }
+QWidget#scraperView QPushButton{
+  border: 1px solid #8C7DA1;
+  padding: 5px;
+
+}
+
+QWidget#scraperView QPushButton:hover{
+  background-color: #9f8c7da1;
+}
+
+#scraperStateText {
+  background-color: #0A0F0D;
+  border: 1px solid #b6acc3;
+  color: #8C7DA1;
+}
+
+#widget QTextEdit#scraperDirectory {
+  background-color: #8C7DA1;
+  color: #b6acc3;
+}
+
+#mainContentWidget QPushButton{
+  border: 0px;
+  background-color: rgba(255,255,255,0);
+  width: 100px;
+  color: #ffffffff;
+  font-size: 25px;
+}
+
+#mainContentWidget QPushButton[cssClass="playButton"]{
+  background-color: #D73333
+}
+
+
+#mainContentWidget QPushButton:hover,
+QWidget#settings_tab QPushButton:hover{
+  background-color: #b6acc3;
+  color: #D73333;
+}
+
+#singleElementScrollArea QScrollBar:horizontal{
+  height:0px;
+}
+
+#singleElementScrollArea QScrollBar:vertical{
+  width: 0px;
+}
+
+#statusbar,
+#overallProgressBar,
+#mediaProgressBar{
+  color: #b6acc3;
+}
+
+ Settings
+
+QWidget#settingsTab{
+  
+}
+
+QWidget#settings_tab
+{  margin: 0;
+  padding: 0;}
+
+QWidget#settings_tab QWidget{
+  color: #D73333;
+}
+
+QWidget#settings_tab QPushButton{
+  border: 1px solid #D73333;
+  border-bottom: 2px solid #D73333;
+  padding: 5px;
+}
+
+QWidget#settings_tab QPushButton:hover{
+  background-color: #98d73333;
+}
+
+QWidget#settings_tab QWidget {
+  background-color: #0A0F0D;
+}
+
+#booruSettingsLabel,
+#destinationFoldersLabel,
+#tagsLabel,
+#redditSettingsLabel{
+  border-bottom: 2px solid #D73333;
+  padding-bottom: 3px;
+  margin: 0;
+}
+
+QWidget#settings_tab QWidget#destinationFolderHeader{
+  margin: 0px;
+  padding: 0px;
+}
+
+#destinationFoldersList::item:hover,
+#tagsList::item:hover{
+  background-color: #dce98383;
+}
+
+#tagsList{
+  min-height: 300px;
+}
+
+#destinationFoldersList{
+  margin-left: 0px;
+  margin-right: 0px;
+
+}
