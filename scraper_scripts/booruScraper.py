@@ -176,7 +176,7 @@ def main(path, shelvePath: str = None, messageSignal = None, clsSignal = None, m
             imageDict = ast.literal_eval(contentMatch.group()) """
 
     def checkTerm(term, totalPostNumber):
-        os.makedirs(f'{path}\\Content to be filtered\\' + term, exist_ok = True)
+        os.makedirs(f'{path}\\Content to be filtered\\{term}', exist_ok = True)
 
         if environment["useApi"] == "True":
             termUrl = apiUrl + apiEndpoint + term
