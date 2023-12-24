@@ -60,6 +60,13 @@ class VideoPlayer(QWidget):
         self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.playButton.clicked.connect(self.play)
 
+        self.muteButton = QPushButton()
+        self.muteButton.setEnabled(True)
+        self.muteButton.setFixedHeight(24)
+        self.muteButton.setIconSize(btnSize)
+        self.muteButton.setIcon(self.style().standardIcon(QStyle.SP_MediaVolume))
+        self.muteButton.clicked.connect(self.toggleMute)
+
         self.positionSlider = QSlider(Qt.Horizontal)
         self.positionSlider.setRange(0, 0)
         self.positionSlider.sliderMoved.connect(self.setPosition)
@@ -68,15 +75,27 @@ class VideoPlayer(QWidget):
         self.statusBar.setFont(QFont("Noto Sans", 7))
         self.statusBar.setFixedHeight(14)
 
+        self.volumeSlider = QSlider(Qt.Horizontal)
+        self.volumeSlider.setRange(0, 100)
+        self.volumeSlider.sliderMoved.connect(self.setVolume)
+        self.volumeSlider.setFixedWidth(100)
+
         controlLayout = QHBoxLayout()
         controlLayout.setContentsMargins(100, 0, 100, 0)
         controlLayout.addWidget(openButton)
         controlLayout.addWidget(self.playButton)
-        controlLayout.addWidget(self.positionSlider)
+        controlLayout.addWidget(self.muteButton)
+        controlLayout.addWidget(self.volumeSlider)
+
+        controlsLayout = QVBoxLayout()
+        controlsLayout.setContentsMargins(100, 0, 100, 0)
+        controlsLayout.addWidget(self.positionSlider)
+        controlsLayout.addLayout(controlLayout)
+        
 
         layout = QVBoxLayout()
         layout.addLayout(self.videoContainerLayout)
-        layout.addLayout(controlLayout)
+        layout.addLayout(controlsLayout)
         layout.addWidget(self.statusBar)
 
         self.setLayout(layout)
@@ -85,6 +104,7 @@ class VideoPlayer(QWidget):
         self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
+        self.mediaPlayer.volumeChanged.connect(self.volumeChanged)
         self.mediaPlayer.error.connect(self.handleError)
         self.statusBar.showMessage("Ready")
 
@@ -119,6 +139,12 @@ class VideoPlayer(QWidget):
             self.mediaPlayer.pause()
         else:
             self.mediaPlayer.play()
+    def toggleMute(self):
+        self.mediaPlayer.setMuted(not self.mediaPlayer.isMuted())
+        if(self.mediaPlayer.isMuted()):
+            self.muteButton.setIcon(self.style().standardIcon(QStyle.SP_MediaVolumeMuted))
+        else:
+            self.muteButton.setIcon(self.style().standardIcon(QStyle.SP_MediaVolume))
 
     def mediaStateChanged(self, state):
         if self.mediaPlayer.state() == QtMultimedia.QMediaPlayer.PlayingState:
@@ -133,9 +159,16 @@ class VideoPlayer(QWidget):
 
     def durationChanged(self, duration):
         self.positionSlider.setRange(0, duration)
+        self.volumeSlider.setValue(self.mediaPlayer.volume())
+    
+    def volumeChanged(self, volume):
+        self.volumeSlider.setValue(volume)
 
     def setPosition(self, position):
         self.mediaPlayer.setPosition(position)
+
+    def setVolume(self, position):
+        self.mediaPlayer.setVolume(position)
 
     def handleError(self):
         self.playButton.setEnabled(False)
