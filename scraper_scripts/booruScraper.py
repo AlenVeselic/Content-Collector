@@ -459,7 +459,8 @@ def main(path, shelvePath: str = None, messageSignal = None, clsSignal = None, m
         
 
     log("Starting Reddit download", messageSignal)
-    redditDownload(redditPages, None, path, messageSignal, clsSignal, mediaSignal, overallSignal, progressStages, currentStage)
+    if environment["skipReddit"] == "False":
+        redditDownload(redditPages, None, path, messageSignal, clsSignal, mediaSignal, overallSignal, progressStages, currentStage)
     log("Done", messageSignal)
 
 if __name__ == "__main__":
