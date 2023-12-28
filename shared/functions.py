@@ -24,6 +24,6 @@ def calculateElementHeight(width, element):
         print(consoleName + "Unkown element type - making square")
         return width
     
-    print(f"{consoleName} Element ratio: {elementRatio}")
+    #print(f"{consoleName} Element ratio: {elementRatio}")
 
     return width*elementRatio
