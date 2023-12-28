@@ -26,12 +26,24 @@ class UIWithResizeLogic(QMainWindow):
 
     destination = ""
 
+    maxPages = 0
+    pagesAvailable = pyqtSignal(int)
+    updatePagesLabel = pyqtSignal(str)
+
+    currentContentFilenames = None
+    currentChosenDirectory = ""
+
     def __init__(self):
         QMainWindow.__init__(self)
         self.ui = galleryView()
         self.ui.setDirectory = self.setDirectory
         self.ui.chLayout = self.chLayout
         self.ui.setupUi(self, False)
+        self.pagesAvailable.connect(self.setMaxPages)
+        self.ui.nextPageButton.clicked.connect(self.nextPage)
+        self.ui.previousPageButton.clicked.connect(self.previousPage)
+        self.updatePagesLabel.connect(self.ui.updatePages)
+        
         self.currentGridColumnNumber = 0
         self.vidNumber = 0
         self.lastSetDirectoryFolder = ""
@@ -61,7 +73,7 @@ class UIWithResizeLogic(QMainWindow):
             self.ui.baseWindow.addWidget(nextUi)
             self.ui.baseWindow.setCurrentWidget(nextUi)
     
-    def setDirectory(self, act, directory=0, contentFilenames = None):
+    def setDirectory(self, act, directory=0, contentFilenames = None, currentPage = 0):
         self.content = []
         self.currentGridColumnNumber = 0
         if self.lastSetDirectoryFolder == "":
@@ -73,6 +85,7 @@ class UIWithResizeLogic(QMainWindow):
             print(f"Received content filenames: {contentFilenames}")
         if directory == 0 and contentFilenames == None:
             folder = QFileDialog.getExistingDirectory(self.ui.menuFile, "Choose directory", initDir)
+            self.currentChosenDirectory = folder
             lastSlashIndex = folder.rfind("/")
             containingFolder = folder[:lastSlashIndex]
             self.lastSetDirectoryFolder = containingFolder
@@ -89,12 +102,13 @@ class UIWithResizeLogic(QMainWindow):
             self.ui.statusbar.showMessage(folder)
 
             if contentFilenames == None:
-                self.generateContent(folder)
+                self.generateContent(folder, currentPage)
             else:
-                self.generateContent(folder, contentFilenames)
+                self.currentContentFilenames = contentFilenames
+                self.generateContent(folder, currentPage, contentFilenames)
 
-    def generateContent(self, folder, contentFilenames = None):
-        self.contentGenerationThread = contentThread(folder, self, contentFilenames)
+    def generateContent(self, folder, currentPage, contentFilenames = None):
+        self.contentGenerationThread = contentThread(folder, self, self.pagesAvailable, currentPage, contentFilenames)
         self.contentGenerationThread.content.connect(self.newContent)
         self.contentGenerationThread.start()
 
@@ -125,7 +139,7 @@ class UIWithResizeLogic(QMainWindow):
     
         lineWidth = basicWidth*(numberOfColumns-2)
 
-        print("Column: " + str(self.currentGridColumnNumber))
+        #print("Column: " + str(self.currentGridColumnNumber))
         
         if self.currentGridColumnNumber >= numberOfColumns - 2:
             self.currentGridColumnNumber = 0
@@ -185,6 +199,30 @@ class UIWithResizeLogic(QMainWindow):
                 break
             self.currentWidget += 1
                 
+    def setMaxPages(self, pages):
+        
+        self.maxPages = pages
+        print(f"Page update: {self.ui.currentPage}/{self.maxPages}")
+        self.ui.availablePages = self.maxPages
+        self.ui.pagesLabel.setText(f"{self.ui.currentPage}/{self.maxPages}")
+        self.ui.pagesLabel.repaint()
+
+
+    def nextPage(self):
+        self.ui.currentPage = self.ui.currentPage + 1
+        
+        print(f"Page update: {self.ui.currentPage}/{self.maxPages}")
+        self.updatePagesLabel.emit(f"{self.ui.currentPage}/{self.maxPages}")
+        self.setDirectory("act", self.currentChosenDirectory, self.currentContentFilenames, self.ui.currentPage)
+
+    
+    def previousPage(self):
+        self.ui.currentPage = self.ui.currentPage - 1
+        
+        print(f"Page update: {self.ui.currentPage}/{self.maxPages}")
+        self.updatePagesLabel.emit(f"{self.ui.currentPage}/{self.maxPages}")
+        self.setDirectory("act", self.currentChosenDirectory, self.currentContentFilenames, self.ui.currentPage)
+
     def resizeEvent(self, event):
         if not isinstance(self.ui.baseWindow.currentWidget(), singleElementView) and not self.content == None:
             QMainWindow.resizeEvent(self, event)

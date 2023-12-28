@@ -44,7 +44,7 @@ class loadThread(QThread):
     
     def run(self):
         if self.type == "image":
-            print("Loading image: " + self.path)
+            #print("Loading image: " + self.path)
             loadImageThreaded(self.path, self.imageLoaded)
         elif self.type == "gif":
             loadGifThreaded(self.path, self.gifLoaded)

@@ -813,7 +813,7 @@ def generateContent(contentDirectory, mainWindow):
 
     return content
 
-def generateContentThreaded(contentDirectory, mainWindow, contentSignal, contentFilenames):
+def generateContentThreaded(contentDirectory, mainWindow, contentSignal, pagesAvailableSignal, currentPage, contentFilenames):
     if contentFilenames == None:
         contentFilenames = os.listdir(contentDirectory)
         contentFilenames.sort(key=lambda filepath: os.path.getctime(os.path.join(contentDirectory, filepath)))
@@ -827,23 +827,26 @@ def generateContentThreaded(contentDirectory, mainWindow, contentSignal, content
     combinedExtensions.append(videoExtension)
     combinedExtensions.append(gifExtension)
 
-    vidsInFolder = [file for file in contentFilenames if any(extension in file for extension in combinedExtensions) ]
+    # vidsInFolder = [file for file in contentFilenames if any(extension in file for extension in combinedExtensions) ]
 
-    vidCount = len(vidsInFolder)
-    vidLimit = 20
-    if vidCount > vidLimit:
-        print("Too many vids!")
-        lastVideo = vidsInFolder[vidLimit + 1]
-        lastVideoIndex = contentFilenames.index(lastVideo)
-        print(f"Getting {lastVideoIndex} content")
-        contentFilenames = contentFilenames[:lastVideoIndex]
+    # vidCount = len(vidsInFolder)
+    # vidLimit = 20
+    # if vidCount > vidLimit:
+    #     print("Too many vids!")
+    #     lastVideo = vidsInFolder[vidLimit + 1]
+    #     lastVideoIndex = contentFilenames.index(lastVideo)
+    #     print(f"Getting {lastVideoIndex} content")
+    #     contentFilenames = contentFilenames[:lastVideoIndex]
 
+    pagesAvailableSignal.emit(len(contentFilenames)/20)
 
-    if len(contentFilenames) > 500: contentFilenames = contentFilenames[:500]
+    nextPage = currentPage * 20 + 20
+
+    if len(contentFilenames) > 20: contentFilenames = contentFilenames[currentPage*20:nextPage]
 
     for image in contentFilenames:
         
         imagePath = os.path.join(contentDirectory, image)
         contentSignal.emit(imagePath, image, contentDirectory)
-        print("In loop:" + str(contentNumber))
+        #print("In loop:" + str(contentNumber))
         contentNumber += 1

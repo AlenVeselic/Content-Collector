@@ -24,25 +24,14 @@ class galleryView(QMainWindow):
         self.numberOfColumns = 6
         self.maxColumnWidth = 100
         self.finalColumnMargin = 65
+        self.currentPage = 1
+        self.availablePages = 0
 
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(979, 713)
-        palette = QPalette()
-        brush = QBrush(QColor(QColorConstants.Black))
-        brush.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.Base, brush)
-        brush1 = QBrush(QColor(QColorConstants.Black))
-        brush1.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.Base, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.Base, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.Window, brush1)
 
-        MainWindow.setPalette(palette)
         MainWindow.setAutoFillBackground(False)
-        MainWindow.setStyleSheet(u"")
 
         self.actionSet_Directory = QAction(MainWindow)
         self.actionSet_Directory.setObjectName(u"actionSet_Directory")
@@ -72,8 +61,20 @@ class galleryView(QMainWindow):
         self.gallery_tab = QWidget()
         self.gallery_tab.setObjectName(u"gallery_tab")
 
-        self.horizontalLayout = QHBoxLayout(self.gallery_tab)
+        self.horizontalLayout = QVBoxLayout(self.gallery_tab)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+
+        self.galleryBar = QHBoxLayout()
+        self.nextPageButton = QPushButton()
+        self.pagesLabel = QLabel()
+        self.pagesLabel.setAlignment(Qt.AlignCenter)
+        self.previousPageButton = QPushButton()
+
+        self.galleryBar.addWidget(self.previousPageButton)
+        self.galleryBar.addWidget(self.pagesLabel)
+        self.galleryBar.addWidget(self.nextPageButton)
+
+        self.horizontalLayout.addLayout(self.galleryBar)
 
         self.scrollArea = QScrollArea(self.gallery_tab)
         self.scrollArea.setObjectName(u"scrollArea")
@@ -179,10 +180,17 @@ class galleryView(QMainWindow):
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
+        
+    def updatePages(self, text):
+        self.pagesLabel.setText(text)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.actionSet_Directory.setText(QCoreApplication.translate("MainWindow", u"Set Directory", None))
         self.actionTodays_Picks.setText(QCoreApplication.translate("MainWindow", u"Check Today's Picks", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
+
+        self.nextPageButton.setText(QCoreApplication.translate("MainWindow", u">", None))
+        self.previousPageButton.setText(QCoreApplication.translate("MainWindow", u"<", None))
+        self.pagesLabel.setText(QCoreApplication.translate("MainWindow", f"{self.currentPage} / {self.availablePages}", None))
     # retranslateUi
