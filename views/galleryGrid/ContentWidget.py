@@ -48,12 +48,12 @@ class ContentWidget(QWidget):
     def setContent(self):
 
         if not self.widgetPath.endswith(('.mp4', '.gif')):
-            print("Image " + self.fileName + " is being processed." + " " + str(len(self.mainWindow.content) + 1))
+            #print("Image " + self.fileName + " is being processed." + " " + str(len(self.mainWindow.content) + 1))
             self.type = ContentWidgetTypes.IMAGE
             self.runImageThread()
 
         elif self.widgetPath.endswith('.mp4'):
-            print("Video " + self.fileName + " is being processed. " + " " + str(len(self.mainWindow.content) + 1))
+            #print("Video " + self.fileName + " is being processed. " + " " + str(len(self.mainWindow.content) + 1))
             self.type = ContentWidgetTypes.VIDEO
             self.label = ClickableVideoWidget()
 
@@ -61,7 +61,7 @@ class ContentWidget(QWidget):
 
             self.mainWindow.vidNumber += 1
         else:
-            print("Gif " + self.fileName + " is being processed. " + " " + str(len(self.mainWindow.content) + 1))
+            #print("Gif " + self.fileName + " is being processed. " + " " + str(len(self.mainWindow.content) + 1))
             self.type = ContentWidgetTypes.GIF
             self.runGifThread()
 
@@ -178,7 +178,7 @@ class ContentWidget(QWidget):
         self.videoThread.start()
     def resizeEvent(self, event):
         if hasattr(self, "centralwidget") and self.loaded == True:
-            print("Resizing!")
+            #print("Resizing!")
             newWidgetHeight = calculateElementHeight(self.parentWidget().width(), self.centralwidget)
             if(self.type == ContentWidgetTypes.GIF):
                 
