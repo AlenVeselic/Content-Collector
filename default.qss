@@ -149,17 +149,21 @@ QWidget#settings_tab
 {  margin: 0;
   padding: 0;}
 
-QWidget#settings_tab QWidget{
+QWidget#settings_tab QWidget,
+QWidget#gallery_tab QWidget{
   color: #D73333;
 }
 
-QWidget#settings_tab QPushButton{
+QWidget#settings_tab QPushButton,
+QWidget#gallery_tab QPushButton
+{
   border: 1px solid #D73333;
   border-bottom: 2px solid #D73333;
   padding: 5px;
 }
 
-QWidget#settings_tab QPushButton:hover{
+QWidget#settings_tab QPushButton:hover,
+QWidget#gallery_tab QPushButton:hover{
   background-color: #98d73333;
 }
 
