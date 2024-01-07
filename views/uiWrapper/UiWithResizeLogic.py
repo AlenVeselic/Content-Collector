@@ -47,6 +47,7 @@ class UIWithResizeLogic(QMainWindow):
         self.currentGridColumnNumber = 0
         self.vidNumber = 0
         self.lastSetDirectoryFolder = ""
+        self.destinationFolders = []
     
     def chLayout(self, newUi):
         if isinstance(newUi, singleElementView):
