@@ -64,6 +64,8 @@ class singleElementView(QWidget):
 
         self.scale = 1
 
+        self.destinationFolders = []
+
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
 
         self.setContentsMargins(0,0,0,0)
@@ -141,6 +143,16 @@ class singleElementView(QWidget):
         self.sendToSameButton.setGeometry(QRect(370, 0, 75, 23))
         self.sendToSameButton.hide()
 
+        self.sendToSelectedDestinationButton = QPushButton(self.widget_3)
+        self.sendToSelectedDestinationButton.setObjectName(u"SendToSelectedDestination")
+        self.sendToSelectedDestinationButton.setGeometry(QRect(550, 0, 75, 23))
+        self.sendToSelectedDestinationButton.hide()
+
+        self.selectDestinationCombobox = QComboBox(self.widget_3)
+        self.selectDestinationCombobox.setObjectName(u"selectDestinationCombobox")
+        self.selectDestinationCombobox.setGeometry(QRect(630, 0, 75, 23))
+        self.selectDestinationCombobox.hide()
+
         self.horizontalLayout.addWidget(self.widget_3)
 
         self.verticalLayout.addWidget(self.widget_2)
@@ -215,6 +227,9 @@ class singleElementView(QWidget):
         self.deleteButton.clicked.connect(self.deleteContent)
         self.sendToButton.clicked.connect(self.sendContentTo)
         self.sendToSameButton.clicked.connect(lambda: self.sendContentTo(sendToSameDirectory=True))
+
+        self.selectDestinationCombobox.currentTextChanged.connect(self.selectedDestinationChanged)
+        self.sendToSelectedDestinationButton.clicked.connect(lambda: self.sendContentTo(sendToSameDirectory=True))
 
         self.retranslateUi(parent)
     # setupUi
@@ -379,7 +394,18 @@ class singleElementView(QWidget):
             self.currentDestinationFolder = os.path.split(self.parentWidget().parentWidget().destination)[-1]
             self.sendToSameButton.show()
             self.sendToSameButton.setText(QCoreApplication.translate("MainWindow", f"Send To {self.currentDestinationFolder}", None))
+            self.sendToSelectedDestinationButton.setText(QCoreApplication.translate("MainWindow", f"Send To", None))
             self.sendToSameButton.adjustSize()
+            
+            for destination in self.parentWidget().parentWidget().destinationFolders:
+                if self.selectDestinationCombobox.findText(destination) == -1:
+                    self.selectDestinationCombobox.addItem(destination)
+            if self.selectDestinationCombobox.count() > 0:
+                self.selectDestinationCombobox.show()
+                self.selectDestinationCombobox.adjustSize()
+                
+                self.sendToSelectedDestinationButton.show()
+                self.sendToSelectedDestinationButton.adjustSize()
 
         self.loaded = True
         
@@ -514,9 +540,21 @@ class singleElementView(QWidget):
         
         if self.parentWidget().parentWidget().destination:
             self.currentDestinationFolder = os.path.split(self.parentWidget().parentWidget().destination)[-1]
+
+            if self.parentWidget().parentWidget().destination not in self.parentWidget().parentWidget().destinationFolders:
+                self.parentWidget().parentWidget().destinationFolders.append(self.parentWidget().parentWidget().destination)
+                self.selectDestinationCombobox.addItem(self.parentWidget().parentWidget().destination)
+                self.selectDestinationCombobox.setCurrentText(self.parentWidget().parentWidget().destination)
+                self.selectDestinationCombobox.adjustSize()
+
             self.sendToSameButton.show()
             self.sendToSameButton.setText(QCoreApplication.translate("MainWindow", f"Send To {self.currentDestinationFolder}", None))
             self.sendToSameButton.adjustSize()
+
+            self.sendToSelectedDestinationButton.show()
+            self.sendToSelectedDestinationButton.adjustSize()
+
+            self.selectDestinationCombobox.show()
 
         destinationContentPath = f"{self.parentWidget().parentWidget().destination}/{filename}"
 
@@ -594,5 +632,9 @@ class singleElementView(QWidget):
             leftButtonPosition = self.scrollArea.geometry().topLeft()
             self.leftButton.move(leftButtonPosition)
             self.leftButton.setFixedHeight(containerHeight)
+    
+    def selectedDestinationChanged(self, newDestination):
+        self.parentWidget().parentWidget().destination = newDestination
+        self.selectDestinationCombobox.adjustSize()
 
 
