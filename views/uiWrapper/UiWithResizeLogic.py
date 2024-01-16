@@ -1,4 +1,4 @@
-import os
+import os, psycopg2
 from pathlib import Path
 
 from PyQt5.QtCore import *
@@ -48,7 +48,17 @@ class UIWithResizeLogic(QMainWindow):
         self.vidNumber = 0
         self.lastSetDirectoryFolder = ""
         self.destinationFolders = []
-    
+
+        if os.environ.get("DATABASE_ENABLED") == "True":
+            print("Initializing database connection")
+            self.db = psycopg2.connect(
+                database=os.environ.get("DATABASE"),
+                user=os.environ.get("DATABASE_USER"),
+                password=os.environ.get("DATABASE_PASSWORD"),
+                host=os.environ.get("DATABASE_HOST"),
+                port=os.environ.get("DATABASE_PORT"),
+            )
+                
     def chLayout(self, newUi):
         if isinstance(newUi, singleElementView):
             nextUi = newUi
