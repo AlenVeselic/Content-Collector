@@ -87,15 +87,15 @@ class VideoPlayer(QWidget):
         controlLayout.addWidget(self.muteButton)
         controlLayout.addWidget(self.volumeSlider)
 
-        controlsLayout = QVBoxLayout()
-        controlsLayout.setContentsMargins(100, 0, 100, 0)
-        controlsLayout.addWidget(self.positionSlider)
-        controlsLayout.addLayout(controlLayout)
+        self.controlsLayout = QVBoxLayout()
+        self.controlsLayout.setContentsMargins(100, 0, 100, 0)
+        self.controlsLayout.addWidget(self.positionSlider)
+        self.controlsLayout.addLayout(controlLayout)
         
 
         layout = QVBoxLayout()
         layout.addLayout(self.videoContainerLayout)
-        layout.addLayout(controlsLayout)
+        layout.addLayout(self.controlsLayout)
         layout.addWidget(self.statusBar)
 
         self.setLayout(layout)
@@ -128,7 +128,7 @@ class VideoPlayer(QWidget):
             self.play()
 
             self.videoLayout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-            self.videoWidget.setFixedSize(containerWidth, containerHeight)
+            self.videoWidget.setFixedSize(containerWidth, containerHeight - 150)
 
     def clear(self):
         self.gif = None
