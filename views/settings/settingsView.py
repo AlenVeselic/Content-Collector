@@ -70,15 +70,18 @@ class settingsView(QWidget):
 
         self.destinationFolderHeader = QWidget(self.booruScraperSettingsWrapper)
         self.destinationFolderHeader.setObjectName(u"destinationFolderHeader")
+
         self.horizontalLayout = QHBoxLayout(self.destinationFolderHeader)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
 
         self.destinationFoldersLabel = QLabel(self.destinationFolderHeader)
         self.destinationFoldersLabel.setObjectName(u"destinationFoldersLabel")
+
         sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.destinationFoldersLabel.sizePolicy().hasHeightForWidth())
+
         self.destinationFoldersLabel.setSizePolicy(sizePolicy)
         self.destinationFoldersLabel.setSizeIncrement(QSize(0, 0))
 
@@ -250,8 +253,45 @@ class settingsView(QWidget):
 
         self.horizontalLayout_2.addWidget(self.specificSourceSettings)
 
+        self.contentTagsWrapper = QWidget(self.settingsScrollAreaWidgetContents)
+        self.contentTagsWrapper.setObjectName(u"contentTagsContents")
+        self.contentTagsWrapper.setGeometry(QRect(0, 0, 373, 194))
+
+        self.contentTagsLayout = QVBoxLayout(self.contentTagsWrapper)
+        self.contentTagsLayout.setObjectName(u"contentTagsLayout")
+
+        self.contentTagsHeader = QWidget(self.contentTagsWrapper)
+
+        self.contentTagsHeaderLayout = QHBoxLayout(self.contentTagsHeader)
+
+        self.contentTagsLabel = QLabel(self.contentTagsHeader)
+        self.contentTagsLabel.setObjectName(u"contentTagsLabel")
+        self.contentTagsLabel.setSizePolicy(sizePolicy)
+        self.contentTagsLabel.setSizeIncrement(QSize(0, 0))
+
+        self.contentTagsHeaderLayout.addWidget(self.contentTagsLabel)
+
+        self.contentTagsAdd = QPushButton(self.contentTagsHeader)
+        self.contentTagsAdd.setObjectName(u"contentTagsAdd")
+
+        self.contentTagsHeaderLayout.addWidget(self.contentTagsAdd)
+
+        self.contentTagsRemove = QPushButton(self.contentTagsHeader)
+        self.contentTagsRemove.setObjectName(u"contentTagsRemove")
+
+        self.contentTagsHeaderLayout.addWidget(self.contentTagsRemove)
+        self.contentTagsHeaderLayout.setContentsMargins(0,0,0,0)
+
+        self.contentTagsLayout.addWidget(self.contentTagsHeader)
+
+        self.contentTagsList = QListWidget(self.contentTagsWrapper)
+        self.contentTagsList.setObjectName(u"contentTagsList")
+
+        self.contentTagsLayout.addWidget(self.contentTagsList)
 
         self.verticalLayout_6.addWidget(self.redditSettingsWrapper)
+
+        self.verticalLayout_6.addWidget(self.contentTagsWrapper)
 
         self.settingsScrollArea.setWidget(self.settingsScrollAreaWidgetContents)
 
@@ -271,7 +311,6 @@ class settingsView(QWidget):
 
         self.horizontalLayout_3.addWidget(self.saveButton)
 
-
         self.verticalLayout.addWidget(self.actionButtons)
 
         self.horizontalLayout.addLayout(self.verticalLayout)
@@ -286,6 +325,9 @@ class settingsView(QWidget):
         self.destinationFolderAdd.clicked.connect(self.addDestination)
         self.destinationFolderRemove.clicked.connect(self.removeDestination)
 
+        self.contentTagsAdd.clicked.connect(self.addContentTag)
+        self.contentTagsRemove.clicked.connect(self.removeContentTag)
+
         self.skipRedditCheckBox.stateChanged.connect(self.setSkipReddit)
 
         self.saveButton.clicked.connect(self.saveSettings)
@@ -296,9 +338,11 @@ class settingsView(QWidget):
         self.booruSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Booru Scraper Settings", None))
         self.useApiCheckBox.setText(QCoreApplication.translate("MainWindow", u"Use api", None))
         self.skipBooruCheckBox.setText(QCoreApplication.translate("MainWindow", u"Skip booru scraping", None))
+
         self.destinationFoldersLabel.setText(QCoreApplication.translate("MainWindow", u"Destination Folders (For duplicate checking while scraping)", None))
         self.destinationFolderAdd.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.destinationFolderRemove.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
+
         self.tagsLabel.setText(QCoreApplication.translate("MainWindow", u"Tags", None))
         self.tagAdd.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.tagRemove.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
@@ -311,6 +355,11 @@ class settingsView(QWidget):
         self.customFeedNameLabel.setText(QCoreApplication.translate("MainWindow", u"Custom Feed Name", None))
         self.enableSpecificSourceDownload.setText(QCoreApplication.translate("MainWindow", u"Download only from specific sources", None))
         self.possibleSourcesLabel.setText(QCoreApplication.translate("MainWindow", u"Possible sources", None))
+
+        self.contentTagsLabel.setText(QCoreApplication.translate("MainWindow", u"Content Tags", None))
+        self.contentTagsAdd.setText(QCoreApplication.translate("MainWindow", u"Add", None))
+        self.contentTagsRemove.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
+
         self.revertButton.setText(QCoreApplication.translate("MainWindow", u"Revert", None))
         self.saveButton.setText(QCoreApplication.translate("MainWindow", u"Save", None))
     # retranslateUi
@@ -398,6 +447,11 @@ class settingsView(QWidget):
             if destinationToRemove:
                 self.destinationFoldersList.removeItemWidget(destinationToRemove[0])
 
+    def addContentTag(self):
+        print("ADDING CONTENT TAG")
+
+    def removeContentTag(self):
+        print("REMOVING CONTENT TAG")
     
     def saveSettings(self):
         self.setRedditCredentials()
