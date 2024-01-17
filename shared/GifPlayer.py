@@ -66,11 +66,23 @@ class GifPlayer(QWidget):
         self.positionSlider.setRange(0, 0)
         self.positionSlider.sliderMoved.connect(self.setPosition)
 
+        
+        self.positionLabel = QLabel()
+        self.positionLabel.setFixedHeight(24)
+        self.positionLabel.setObjectName("positionLabel")
+        self.positionLabel.setText("0:00 / 0:00")
+
+        self.positionBarLayout = QHBoxLayout()
+        self.positionBarLayout.setContentsMargins(100, 0, 100, 0)
+
+        self.positionBarLayout.addWidget(self.positionSlider)
+        self.positionBarLayout.addWidget(self.positionLabel)
+
         controlLayout = QHBoxLayout()
         controlLayout.setContentsMargins(100, 0, 100, 0)
         controlLayout.addWidget(openButton)
         controlLayout.addWidget(self.playButton)
-        controlLayout.addWidget(self.positionSlider)
+        controlLayout.addLayout(self.positionBarLayout)
 
         layout = QVBoxLayout()
         layout.addLayout(self.gifContainerLayout)
@@ -134,6 +146,21 @@ class GifPlayer(QWidget):
 
     def positionChanged(self, position):
         self.positionSlider.setValue(position)
+
+        positionMinutes = int((position/1000)/60)
+        positionSeconds = int((position/1000)%60)
+
+        durationMinutes = int((self.gif.frameCount()/1000)/60)
+        durationSeconds = int((self.gif.frameCount()/1000)%60)
+
+        justifiedPositionMinutes = str(positionMinutes).rjust(2, "0")
+        justifiedPositionSeconds = str(positionSeconds).rjust(2, "0")
+
+        justifiedDurationMinutes = str(durationMinutes).rjust(2, "0")
+        justifiedDurationSeconds = str(durationSeconds).rjust(2, "0")
+
+        self.positionLabel.setText(f"{justifiedPositionMinutes}:{position} / {justifiedDurationMinutes}:{self.gif.frameCount()}")
+
 
     def durationChanged(self):
         print(self.gif.frameCount())

@@ -71,6 +71,17 @@ class VideoPlayer(QWidget):
         self.positionSlider.setRange(0, 0)
         self.positionSlider.sliderMoved.connect(self.setPosition)
 
+        self.positionLabel = QLabel()
+        self.positionLabel.setFixedHeight(24)
+        self.positionLabel.setObjectName("positionLabel")
+        self.positionLabel.setText("0:00 / 0:00")
+
+        self.positionBarLayout = QHBoxLayout()
+        self.positionBarLayout.setContentsMargins(100, 0, 100, 0)
+
+        self.positionBarLayout.addWidget(self.positionSlider)
+        self.positionBarLayout.addWidget(self.positionLabel)
+
         self.statusBar = QStatusBar()
         self.statusBar.setFont(QFont("Noto Sans", 7))
         self.statusBar.setFixedHeight(14)
@@ -89,7 +100,7 @@ class VideoPlayer(QWidget):
 
         self.controlsLayout = QVBoxLayout()
         self.controlsLayout.setContentsMargins(100, 0, 100, 0)
-        self.controlsLayout.addWidget(self.positionSlider)
+        self.controlsLayout.addLayout(self.positionBarLayout)
         self.controlsLayout.addLayout(controlLayout)
         
 
@@ -156,6 +167,20 @@ class VideoPlayer(QWidget):
 
     def positionChanged(self, position):
         self.positionSlider.setValue(position)
+
+        positionMinutes = int((position/1000)/60)
+        positionSeconds = int((position/1000)%60)
+
+        durationMinutes = int((self.mediaPlayer.duration()/1000)/60)
+        durationSeconds = int((self.mediaPlayer.duration()/1000)%60)
+
+        justifiedPositionMinutes = str(positionMinutes).rjust(2, "0")
+        justifiedPositionSeconds = str(positionSeconds).rjust(2, "0")
+
+        justifiedDurationMinutes = str(durationMinutes).rjust(2, "0")
+        justifiedDurationSeconds = str(durationSeconds).rjust(2, "0")
+
+        self.positionLabel.setText(f"{justifiedPositionMinutes}:{justifiedPositionSeconds} / {justifiedDurationMinutes}:{justifiedDurationSeconds}")
 
     def durationChanged(self, duration):
         self.positionSlider.setRange(0, duration)
