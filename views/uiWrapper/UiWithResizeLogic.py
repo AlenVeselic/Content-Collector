@@ -26,7 +26,7 @@ class UIWithResizeLogic(QMainWindow):
 
     destination = ""
 
-    maxPages = 0
+    maxPages = 1
     pagesAvailable = pyqtSignal(int)
     updatePagesLabel = pyqtSignal(str)
 
@@ -220,19 +220,21 @@ class UIWithResizeLogic(QMainWindow):
 
 
     def nextPage(self):
+        if self.ui.currentPage == self.maxPages: return
         self.ui.currentPage = self.ui.currentPage + 1
         
         print(f"Page update: {self.ui.currentPage}/{self.maxPages}")
         self.updatePagesLabel.emit(f"{self.ui.currentPage}/{self.maxPages}")
-        self.setDirectory("act", self.currentChosenDirectory, self.currentContentFilenames, self.ui.currentPage)
+        self.setDirectory("act", self.currentChosenDirectory, self.currentContentFilenames, self.ui.currentPage - 1)
 
     
     def previousPage(self):
+        if self.ui.currentPage == 1: return
         self.ui.currentPage = self.ui.currentPage - 1
         
         print(f"Page update: {self.ui.currentPage}/{self.maxPages}")
         self.updatePagesLabel.emit(f"{self.ui.currentPage}/{self.maxPages}")
-        self.setDirectory("act", self.currentChosenDirectory, self.currentContentFilenames, self.ui.currentPage)
+        self.setDirectory("act", self.currentChosenDirectory, self.currentContentFilenames, self.ui.currentPage - 1)
 
     def resizeEvent(self, event):
         if not isinstance(self.ui.baseWindow.currentWidget(), singleElementView) and not self.content == None:

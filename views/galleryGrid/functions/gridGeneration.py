@@ -838,7 +838,9 @@ def generateContentThreaded(contentDirectory, mainWindow, contentSignal, pagesAv
     #     print(f"Getting {lastVideoIndex} content")
     #     contentFilenames = contentFilenames[:lastVideoIndex]
 
-    pagesAvailableSignal.emit(len(contentFilenames)/20)
+    numberOfPagesAvailable = len(contentFilenames)/20
+
+    pagesAvailableSignal.emit(numberOfPagesAvailable + 1)
 
     nextPage = currentPage * 20 + 20
 

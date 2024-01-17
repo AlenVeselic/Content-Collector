@@ -25,7 +25,7 @@ class galleryView(QMainWindow):
         self.maxColumnWidth = 100
         self.finalColumnMargin = 65
         self.currentPage = 1
-        self.availablePages = 0
+        self.availablePages = 1
 
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
