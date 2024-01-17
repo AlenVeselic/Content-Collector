@@ -63,6 +63,7 @@ class singleElementView(QWidget):
         self.videoPlayer = []
 
         self.scale = 1
+        self.mousewheelZoomIncrement = 10
 
         self.destinationFolders = []
 
@@ -129,6 +130,20 @@ class singleElementView(QWidget):
         self.zoomInButton = QPushButton(self.widget_3)
         self.zoomInButton.setObjectName(u"ZoomIn")
         self.zoomInButton.setGeometry(QRect(100, 0, 75, 23))
+
+        self.zoomSlider = QSlider(Qt.Horizontal)
+        self.zoomSlider.setRange(0, 500)
+        self.zoomSlider.setValue(100)
+        self.zoomSlider.sliderMoved.connect(self.zoom)
+        self.zoomSlider.valueChanged.connect(self.zoom)
+        self.zoomSlider.setFixedWidth(100)
+
+        self.zoomLabel = QLabel()
+        self.zoomLabel.setObjectName(u"zoomLabel")
+        self.zoomLabel.setText(f"{self.zoomSlider.value()}%")
+
+        self.horizontalLayout.addWidget(self.zoomSlider)
+        self.horizontalLayout.addWidget(self.zoomLabel)
 
         self.deleteButton = QPushButton(self.widget_3)
         self.deleteButton.setObjectName(u"DeleteButton")
@@ -447,16 +462,34 @@ class singleElementView(QWidget):
 
         if not self.imageArray[self.imageIndex].endswith(imageExtensions):
             return
+            
+        print((self.zoomSlider.value() + self.mousewheelZoomIncrement) > 500)
 
-        self.scale *= 2
-
-        self.resizeImage()
+        if (self.zoomSlider.value() + self.mousewheelZoomIncrement) > 500:
+            return
+        
+        print(self.zoomSlider.value() + self.mousewheelZoomIncrement)
+        self.zoomSlider.setValue(self.zoomSlider.value() + self.mousewheelZoomIncrement)
     
     def zoomOut(self):
         if not self.imageArray[self.imageIndex].endswith(imageExtensions):
             return
+        
+        print((self.zoomSlider.value() - self.mousewheelZoomIncrement) < 0)
 
-        self.scale = self.scale / 2
+        if (self.zoomSlider.value() - self.mousewheelZoomIncrement) < 0:
+            return
+        
+        self.zoomSlider.setValue(self.zoomSlider.value() - self.mousewheelZoomIncrement)
+    
+    def zoom(self):
+        if not self.imageArray[self.imageIndex].endswith(imageExtensions):
+            return
+        
+        print(str(self.zoomSlider.value()))
+        print(f"New scale {self.scale * (self.zoomSlider.value() / 100)}")
+        self.scale = (self.zoomSlider.value() / 100)
+        self.zoomLabel.setText(f"{self.zoomSlider.value()}%")
 
         self.resizeImage()
     
