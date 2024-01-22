@@ -153,31 +153,49 @@ class singleElementView(QWidget):
 
         self.deleteButton = QPushButton(self.widget_3)
         self.deleteButton.setObjectName(u"DeleteButton")
-        self.deleteButton.setGeometry(QRect(10, 0, 75, 23))
+        self.deleteButton.setFixedSize(75, 23)
+
+        self.horizontalLayout.addWidget(self.deleteButton)
+        # self.deleteButton.setGeometry(QRect(10, 0, 75, 23))
 
         self.sendToButton = QPushButton(self.widget_3)
         self.sendToButton.setObjectName(u"SendToButton")
-        self.sendToButton.setGeometry(QRect(100, 0, 75, 23))
+        self.sendToButton.setFixedSize(75, 23)
+        #self.sendToButton.setGeometry(QRect(100, 0, 75, 23))
+
+        self.horizontalLayout.addWidget(self.sendToButton)
 
         self.sendToSameButton = QPushButton(self.widget_3)
         self.sendToSameButton.setObjectName(u"SendToSameButton")
-        self.sendToSameButton.setGeometry(QRect(190, 0, 75, 23))
+        self.sendToSameButton.setBaseSize(75, 23)
+        # self.sendToSameButton.setGeometry(QRect(190, 0, 75, 23))
         self.sendToSameButton.hide()
+
+        self.horizontalLayout.addWidget(self.sendToSameButton)
 
         self.sendToSelectedDestinationButton = QPushButton(self.widget_3)
         self.sendToSelectedDestinationButton.setObjectName(u"SendToSelectedDestination")
-        self.sendToSelectedDestinationButton.setGeometry(QRect(350, 0, 75, 23))
+        self.sendToSelectedDestinationButton.setFixedSize(75, 23)
+        #self.sendToSelectedDestinationButton.setGeometry(QRect(350, 0, 75, 23))
         self.sendToSelectedDestinationButton.hide()
+
+        self.horizontalLayout.addWidget(self.sendToSelectedDestinationButton)
 
         self.selectDestinationCombobox = QComboBox(self.widget_3)
         self.selectDestinationCombobox.setObjectName(u"selectDestinationCombobox")
-        self.selectDestinationCombobox.setGeometry(QRect(450, 0, 75, 23))
+        self.selectDestinationCombobox.setBaseSize(75, 23)
+        #self.selectDestinationCombobox.setGeometry(QRect(450, 0, 75, 23))
         self.selectDestinationCombobox.hide()
+
+        self.horizontalLayout.addWidget(self.selectDestinationCombobox)
 
         self.addContentToDatabaseButton = QPushButton(self.widget_3)
         self.addContentToDatabaseButton.setObjectName(u"addContentToDatabaseButton")
-        self.addContentToDatabaseButton.setGeometry(QRect(700, 0, 75, 23))
+        self.addContentToDatabaseButton.setBaseSize(100, 23)
+        # self.addContentToDatabaseButton.setGeometry(QRect(700, 0, 75, 23))
         self.addContentToDatabaseButton.hide()
+
+        self.horizontalLayout.addWidget(self.addContentToDatabaseButton)
 
         self.horizontalLayout.addWidget(self.widget_3)
 
@@ -775,5 +793,6 @@ class singleElementView(QWidget):
         databaseConnection.close()    
 
         return tags
+
 
 
