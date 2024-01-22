@@ -1,8 +1,12 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
-import os, logging, shelve, fileinput
+import os, logging, shelve, fileinput, psycopg2
 from cryptography.fernet import Fernet
+from shared.database import getDatabaseOptions
+
+from views.settings.contentTagDialog import contentTagDialog
+from views.settings.removeContentTagDialog import removeContentTagDialog
 
 # TODO: When removing a list item, generate dropdown menu to pick what you are deleting. Current implementation is very rough, having to input text
 # for the tag you want to delete.
@@ -450,8 +454,71 @@ class settingsView(QWidget):
     def addContentTag(self):
         print("ADDING CONTENT TAG")
 
+        createTagDialog = contentTagDialog()
+        if createTagDialog.exec_() == QDialog.Accepted:
+
+            databaseOptions = getDatabaseOptions()
+            
+            newTagData = createTagDialog.getTagData()
+            print(newTagData)
+
+            databaseConnection = psycopg2.connect(**databaseOptions)
+            databaseConnection.autocommit = True
+
+            databaseCursor = databaseConnection.cursor()
+
+            insertTagQuery = "INSERT INTO tags (name, type) VALUES (%s, %s)"
+
+            databaseCursor.execute(insertTagQuery, (newTagData["name"], newTagData["type"],))
+            
+            databaseCursor.close()
+            databaseConnection.close()
+
+
+
     def removeContentTag(self):
         print("REMOVING CONTENT TAG")
+
+        removeTagDialog = removeContentTagDialog(self.contentTags)
+        if removeTagDialog.exec_() == QDialog.Accepted:
+
+            databaseOptions = getDatabaseOptions()
+            
+            tagID = removeTagDialog.getTagToDeleteID()
+            print(tagID)
+
+            databaseConnection = psycopg2.connect(**databaseOptions)
+            databaseConnection.autocommit = True
+
+            databaseCursor = databaseConnection.cursor()
+
+            deleteTagQuery = "DELETE FROM tags WHERE id = %s"
+
+            databaseCursor.execute(deleteTagQuery, (tagID,))
+            
+            databaseCursor.close()
+            databaseConnection.close()
+    
+    def loadContentTags(self):
+        print("Getting content tags from database")
+
+        
+        databaseOptions = getDatabaseOptions()
+
+        databaseConnection = psycopg2.connect(**databaseOptions)
+        databaseCursor = databaseConnection.cursor()
+
+        getTagsQuery = '''SELECT * FROM tags''' 
+
+        databaseCursor.execute(getTagsQuery)
+
+        tags = databaseCursor.fetchall()
+
+        self.contentTags = tags
+        print(self.contentTags)
+
+        databaseCursor.close()
+        databaseConnection.close()
     
     def saveSettings(self):
         self.setRedditCredentials()
@@ -588,6 +655,13 @@ class settingsView(QWidget):
                     foundItem[0].setSelected(True)
         else:
             self.possibleSourcesList.setDisabled(True)
+
+        self.loadContentTags()
+
+        self.contentTagsList.clear()
+
+        for tag in self.contentTags:
+            self.contentTagsList.addItem(tag[2])
 
         logging.info("Settings refreshed")
         
