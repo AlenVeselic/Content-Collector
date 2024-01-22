@@ -19,7 +19,9 @@ cursor = conn.cursor()
 sql_commands = (f'''
     CREATE TABLE IF NOT EXISTS tags(
     id SERIAL PRIMARY KEY,  
-    name VARCHAR(255) NOT NULL
+    created_on TIMESTAMPTZ NOT NULL DEFAULT now(),
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(255) NOT NULL
     )
 ''',
 '''
