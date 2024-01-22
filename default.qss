@@ -150,7 +150,9 @@ QWidget#settings_tab
   padding: 0;}
 
 QWidget#settings_tab QWidget,
-QWidget#gallery_tab QWidget{
+QWidget#gallery_tab QWidget,
+#zoomLabel,
+#positionLabel{
   color: #D73333;
 }
 
@@ -174,7 +176,9 @@ QWidget#settings_tab QWidget {
 #booruSettingsLabel,
 #destinationFoldersLabel,
 #tagsLabel,
-#redditSettingsLabel{
+#redditSettingsLabel,
+#contentTagsLabel,
+#zoomLabel{
   border-bottom: 2px solid #D73333;
   padding-bottom: 3px;
   margin: 0;
