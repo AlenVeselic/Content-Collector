@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 from views.galleryGrid.gallery import galleryView
-from views.singleElement import singleElementView
+from views.singleContent.singleElement import singleElementView
 from views.scraper.scraperView import scraperView
 
 from views.galleryGrid.functions.gridGeneration import createGrid, resizeGrid
@@ -50,14 +50,9 @@ class UIWithResizeLogic(QMainWindow):
         self.destinationFolders = []
 
         if os.environ.get("DATABASE_ENABLED") == "True":
-            print("Initializing database connection")
-            self.db = psycopg2.connect(
-                database=os.environ.get("DATABASE"),
-                user=os.environ.get("DATABASE_USER"),
-                password=os.environ.get("DATABASE_PASSWORD"),
-                host=os.environ.get("DATABASE_HOST"),
-                port=os.environ.get("DATABASE_PORT"),
-            )
+            print("Database enabled")
+
+
                 
     def chLayout(self, newUi):
         if isinstance(newUi, singleElementView):
