@@ -1,6 +1,6 @@
 from PyQt5 import QtMultimediaWidgets
 
-from views.singleElement import singleElementView
+from views.singleContent.singleElement import singleElementView
 
 # TODO: Make parent class for clickable label and this
 

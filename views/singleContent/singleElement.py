@@ -3,13 +3,19 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtMultimedia import *
+
 from shared.GifPlayer import GifPlayer
 from shared.VideoPlayer import VideoPlayer
 from shared.getSizeAdjustedToContainer import getSizeAdjustedToContainer
+from shared.database import getDatabaseOptions
+
 from constants.mediaExtensions import imageExtensions, videoExtension, gifExtension
+
+from views.singleContent.createContentInDatabaseDialog import createContentInDatabaseDialog
+
 from pathlib import Path
 from send2trash import send2trash
-import os, shutil
+import os, shutil, psycopg2
 
 # TODO: Make view folder
 # TODO. Move draggableScrollArea class out of view file
@@ -124,12 +130,12 @@ class singleElementView(QWidget):
         self.widget_3.setSizePolicy(sizePolicy2)
 
         # TODO: Remove zoom gui buttons or introduce a slider
-        self.zoomOutButton = QPushButton(self.widget_3)
-        self.zoomOutButton.setObjectName(u"ZoomOut")
-        self.zoomOutButton.setGeometry(QRect(10, 0, 75, 23))
-        self.zoomInButton = QPushButton(self.widget_3)
-        self.zoomInButton.setObjectName(u"ZoomIn")
-        self.zoomInButton.setGeometry(QRect(100, 0, 75, 23))
+        # self.zoomOutButton = QPushButton(self.widget_3)
+        # self.zoomOutButton.setObjectName(u"ZoomOut")
+        # self.zoomOutButton.setGeometry(QRect(10, 0, 75, 23))
+        # self.zoomInButton = QPushButton(self.widget_3)
+        # self.zoomInButton.setObjectName(u"ZoomIn")
+        # self.zoomInButton.setGeometry(QRect(100, 0, 75, 23))
 
         self.zoomSlider = QSlider(Qt.Horizontal)
         self.zoomSlider.setRange(0, 500)
@@ -147,26 +153,31 @@ class singleElementView(QWidget):
 
         self.deleteButton = QPushButton(self.widget_3)
         self.deleteButton.setObjectName(u"DeleteButton")
-        self.deleteButton.setGeometry(QRect(190, 0, 75, 23))
+        self.deleteButton.setGeometry(QRect(10, 0, 75, 23))
 
         self.sendToButton = QPushButton(self.widget_3)
         self.sendToButton.setObjectName(u"SendToButton")
-        self.sendToButton.setGeometry(QRect(280, 0, 75, 23))
+        self.sendToButton.setGeometry(QRect(100, 0, 75, 23))
 
         self.sendToSameButton = QPushButton(self.widget_3)
         self.sendToSameButton.setObjectName(u"SendToSameButton")
-        self.sendToSameButton.setGeometry(QRect(370, 0, 75, 23))
+        self.sendToSameButton.setGeometry(QRect(190, 0, 75, 23))
         self.sendToSameButton.hide()
 
         self.sendToSelectedDestinationButton = QPushButton(self.widget_3)
         self.sendToSelectedDestinationButton.setObjectName(u"SendToSelectedDestination")
-        self.sendToSelectedDestinationButton.setGeometry(QRect(550, 0, 75, 23))
+        self.sendToSelectedDestinationButton.setGeometry(QRect(350, 0, 75, 23))
         self.sendToSelectedDestinationButton.hide()
 
         self.selectDestinationCombobox = QComboBox(self.widget_3)
         self.selectDestinationCombobox.setObjectName(u"selectDestinationCombobox")
-        self.selectDestinationCombobox.setGeometry(QRect(630, 0, 75, 23))
+        self.selectDestinationCombobox.setGeometry(QRect(450, 0, 75, 23))
         self.selectDestinationCombobox.hide()
+
+        self.addContentToDatabaseButton = QPushButton(self.widget_3)
+        self.addContentToDatabaseButton.setObjectName(u"addContentToDatabaseButton")
+        self.addContentToDatabaseButton.setGeometry(QRect(700, 0, 75, 23))
+        self.addContentToDatabaseButton.hide()
 
         self.horizontalLayout.addWidget(self.widget_3)
 
@@ -237,14 +248,18 @@ class singleElementView(QWidget):
         self.verticalLayout.addWidget(self.mainContentWidget)
 
         self.rightButton.clicked.connect(self.goRight)
-        self.zoomInButton.clicked.connect(self.zoomIn)
-        self.zoomOutButton.clicked.connect(self.zoomOut)
+
+        # self.zoomInButton.clicked.connect(self.zoomIn)
+        # self.zoomOutButton.clicked.connect(self.zoomOut)
+
         self.deleteButton.clicked.connect(self.deleteContent)
         self.sendToButton.clicked.connect(self.sendContentTo)
         self.sendToSameButton.clicked.connect(lambda: self.sendContentTo(sendToSameDirectory=True))
 
         self.selectDestinationCombobox.currentTextChanged.connect(self.selectedDestinationChanged)
         self.sendToSelectedDestinationButton.clicked.connect(lambda: self.sendContentTo(sendToSameDirectory=True))
+
+        self.addContentToDatabaseButton.clicked.connect(self.createAdditionalDataForContent)
 
         self.retranslateUi(parent)
     # setupUi
@@ -255,14 +270,18 @@ class singleElementView(QWidget):
         self.leftButton.setText(QCoreApplication.translate("MainWindow", u"<", None))
         self.image.setText("")
         self.rightButton.setText(QCoreApplication.translate("MainWindow", u">", None))
-        self.zoomOutButton.setText(QCoreApplication.translate("MainWindow", u"-", None))
-        self.zoomInButton.setText(QCoreApplication.translate("MainWindow", u"+", None))
+        # self.zoomOutButton.setText(QCoreApplication.translate("MainWindow", u"-", None))
+        # self.zoomInButton.setText(QCoreApplication.translate("MainWindow", u"+", None))
+        
 
         iconAttribute = getattr(QStyle, "SP_DialogDiscardButton")
         icon = self.style().standardIcon(iconAttribute)
         self.deleteButton.setIcon(icon)
 
         self.sendToButton.setText(QCoreApplication.translate("MainWindow", u"Send To", None))
+
+        self.addContentToDatabaseButton.setText(QCoreApplication.translate("MainWindow", u"Add to database", None))
+        self.addContentToDatabaseButton.adjustSize()
 
     # retranslateUi 
 
@@ -415,12 +434,24 @@ class singleElementView(QWidget):
             for destination in self.parentWidget().parentWidget().destinationFolders:
                 if self.selectDestinationCombobox.findText(destination) == -1:
                     self.selectDestinationCombobox.addItem(destination)
+                    self.selectDestinationCombobox.adjustSize()
             if self.selectDestinationCombobox.count() > 0:
                 self.selectDestinationCombobox.show()
                 self.selectDestinationCombobox.adjustSize()
                 
                 self.sendToSelectedDestinationButton.show()
                 self.sendToSelectedDestinationButton.adjustSize()
+        
+        contentFilename = self.getCurrentContentPathInfo()["Filename"]
+        
+        self.additionalContentInfo = []
+        self.getAdditionalDataFromDatabase(contentFilename)
+
+        if len(self.additionalContentInfo) <= 0:
+            print("Additional content doesn't exist. Create content entry in database?")
+
+            self.addContentToDatabaseButton.show()
+
 
         self.loaded = True
         
@@ -669,5 +700,80 @@ class singleElementView(QWidget):
     def selectedDestinationChanged(self, newDestination):
         self.parentWidget().parentWidget().destination = newDestination
         self.selectDestinationCombobox.adjustSize()
+    
+    def getAdditionalDataFromDatabase(self, filename):
+
+        print("Getting additional data for content")
+
+        
+        databaseOptions = getDatabaseOptions()
+
+        databaseConnection = psycopg2.connect(**databaseOptions)
+        databaseCursor = databaseConnection.cursor()
+
+        getContentQuery = '''SELECT * FROM content WHERE original_filename = %s''' 
+
+        databaseCursor.execute(getContentQuery, (filename, ))
+
+        self.additionalContentInfo = databaseCursor.fetchall()
+
+        print(self.additionalContentInfo)
+
+        databaseCursor.close()
+        databaseConnection.close()
+
+    def createAdditionalDataForContent(self):
+        filename = self.getCurrentContentPathInfo()["Filename"]
+        print(f"Creating additional data for {filename}")
+
+        databaseOptions = getDatabaseOptions()
+        databaseConnection = psycopg2.connect(**databaseOptions)
+        databaseCursor = databaseConnection.cursor()
+
+        tags = self.getContentTags()
+
+        # Open dialog for needed data for content creation
+
+        newContentData = createContentInDatabaseDialog(filename=filename, tags=tags)
+        print(newContentData)
+
+        if newContentData.exec_() == QDialog.Accepted:
+
+            print(newContentData.getContentData())
+
+            # Create content (Create content table entry)
+
+            getContentQuery = '''SELECT * FROM content WHERE original_filename = %s''' 
+
+            databaseCursor.execute(getContentQuery, (filename, ))
+
+            self.additionalContentInfo = databaseCursor.fetchall()
+
+            print(self.additionalContentInfo)
+
+            # Link tags (Create entries in content_tags)
+
+            databaseCursor.close()
+            databaseConnection.close()
+
+    def getContentTags(self):
+        print("Getting content tags from database")
+
+        
+        databaseOptions = getDatabaseOptions()
+
+        databaseConnection = psycopg2.connect(**databaseOptions)
+        databaseCursor = databaseConnection.cursor()
+
+        getTagsQuery = '''SELECT * FROM tags''' 
+
+        databaseCursor.execute(getTagsQuery)
+
+        tags = databaseCursor.fetchall()
+
+        databaseCursor.close()
+        databaseConnection.close()    
+
+        return tags
 
 

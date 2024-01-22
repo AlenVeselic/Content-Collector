@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from views.singleElement import singleElementView
+from views.singleContent.singleElement import singleElementView
 
 class ClickableLabel(QtWidgets.QLabel):
 
